@@ -188,6 +188,10 @@
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
+
+    //This and my version of _.some seem to be short circuiting the 
+    //features of the methods called and just relying on the base 
+    //_.each method that they call.
     var result = true;
     if (!iterator) { iterator = function(item) { return item == true;}}
     _.reduce(collection, function(accumulator, item){
@@ -201,6 +205,18 @@
   // provided, provide a default one
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
+
+    //This is not that clever way.
+    //As I mentioned above this seems to be short circuiting the 
+    //features of the methods called and just relying on the base 
+    //_.each method that they call.
+    var result = false;
+    if (!iterator) { iterator = function(item) { return item == true;}}
+    _.every(collection, function(item){
+      if (iterator(item)) {result = true;}
+    });
+
+    return result;
   };
 
 
@@ -223,11 +239,27 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+    for (var i = 1; i < arguments.length; i++){
+        _.each(arguments[i], function(item, key){
+          obj[key] = item;
+        });
+    };
+
+    return obj;
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+    for (var i = 1; i < arguments.length; i++){
+        _.each(arguments[i], function(item, key){
+          if (!obj.hasOwnProperty(key)) {
+            obj[key] = item;
+          }
+        });
+    };
+
+    return obj;
   };
 
 
