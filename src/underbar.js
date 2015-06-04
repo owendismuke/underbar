@@ -188,36 +188,38 @@
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
-
-    //This and my version of _.some seem to be short circuiting the 
-    //features of the methods called and just relying on the base 
-    //_.each method that they call.
-    //var result = true;
     if (!iterator) { iterator = function(item) { return item == true;}}
 
     return _.reduce(collection, 
       function(accumulator, item){
         return accumulator ? iterator(item) ? true : false : accumulator;
-      //if (!iterator(item)) {result = false;}
       },
       true);
-
-    //return result;
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
   _.some = function(collection, iterator) {
+    if (!iterator) { iterator = function(item) { return item == true;}}
     // TIP: There's a very clever way to re-use every() here.
 
+    /*return collection.length > 0 && 
+            _.every(collection, 
+                    function(item){ 
+                      if(iterator(item)) {
+                       return true;
+                      }
+                    });*/
+
+
+
     //This is not that clever way.
-    //As I mentioned above this seems to be short circuiting the 
-    //features of the methods called and just relying on the base 
-    //_.each method that they call.
     var result = false;
-    if (!iterator) { iterator = function(item) { return item == true;}}
-    _.every(collection, function(item){
-      if (iterator(item)) {result = true;}
+    
+    _.each(collection, function(item){
+      if (!result && iterator(item)){
+        result = true;
+      }
     });
 
     return result;
@@ -335,6 +337,8 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+    var args = Array.prototype.slice.call(arguments, arguments.length-2);
+    setTimeout(function(){func.apply(this, args)}, wait);
   };
 
 
@@ -349,6 +353,10 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    var a = array.slice();
+    var randomizer = Math.floor(Math.random() * (a.length - 0)) + 0;
+
+    return a;
   };
 
 
