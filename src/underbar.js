@@ -192,13 +192,17 @@
     //This and my version of _.some seem to be short circuiting the 
     //features of the methods called and just relying on the base 
     //_.each method that they call.
-    var result = true;
+    //var result = true;
     if (!iterator) { iterator = function(item) { return item == true;}}
-    _.reduce(collection, function(accumulator, item){
-      if (!iterator(item)) {result = false;}
-      }, true);
 
-    return result;
+    return _.reduce(collection, 
+      function(accumulator, item){
+        return accumulator ? iterator(item) ? true : false : accumulator;
+      //if (!iterator(item)) {result = false;}
+      },
+      true);
+
+    //return result;
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
@@ -303,6 +307,25 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    var result;
+    var args = [];
+
+    return function(){
+      var same = false;
+      if (args.length == arguments.length) {
+        same = _.every(arguments, function(item){
+          var index = _.indexOf(arguments, item);
+          return item === args[index];
+        });
+      }
+
+      if (!same){
+        result = func.apply(this, arguments);
+        args = arguments;
+      }
+  
+     return result;
+    };
   };
 
   // Delays a function for the given number of milliseconds, and then calls
